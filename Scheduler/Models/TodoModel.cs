@@ -10,7 +10,7 @@ namespace Scheduler.Models
 
         private bool _status;
         private string _task;
-        private float _timer;
+        private int _timer;
 
         [JsonProperty(PropertyName = "status")]
         public bool Status
@@ -41,7 +41,7 @@ namespace Scheduler.Models
         }
 
         [JsonProperty(PropertyName = "timer")]
-        public float Timer
+        public int Timer
         {
             get { return _timer; }
             set
