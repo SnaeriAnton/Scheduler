@@ -13,7 +13,7 @@ namespace Scheduler.Models
 
         public void SetList(BindingList<TodoModel> toDoList) => _todoDataList = toDoList;
 
-        public void RemoveRecord(int index) => _todoDataList.RemoveAt(index);
+        public void RemoveRecord(int index) => _todoDataList.RemoveAt(index); //Если попытаться удалить объект не созданный выдаст ошибку
 
         public void ChangeList(Action<object, ListChangedEventArgs> methodChanged) => _todoDataList.ListChanged += methodChanged.Invoke;
 

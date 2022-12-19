@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        
         xmlns:local="clr-namespace:Scheduler"
         mc:Ignorable="d"
         Title="Scheduler" Width="1200" Height="800" Loaded="WindowLoaded" Closed="WindowClosed">
@@ -37,9 +38,9 @@
             </DataGrid.Columns>
         </DataGrid>
 
+
         <Button x:Name="buttonDelit" Grid.Column="0" Grid.Row="2" Width="100" Height="50" Click="ButtonPlayClick" FontSize="25">
-            <materialDesign:PackIcon Kind="Play" Height="40" Width="40"/>
-            <!--<materialDesign:PackIcon Kind="Pause" />-->
+            <materialDesign:PackIcon x:Name="iconButtonPlay" Kind="Play" Height="40" Width="40"/>
         </Button>
 
         <Button x:Name="buttonDelete" Grid.Column="1" Grid.Row="2" Width="100" Height="50" Click="ButtonDeleteClick">

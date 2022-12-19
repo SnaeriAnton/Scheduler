@@ -9,11 +9,15 @@ namespace Scheduler
     public partial class MainWindow : Window
     {
         private CompositeRoot _compositeRoot;
+
         private DispatcherTimer _timer;
+        private bool _isPlay = false;
 
         public MainWindow()
         {
             _compositeRoot = new CompositeRoot();
+            _timer = new DispatcherTimer();
+            _timer.Interval = new TimeSpan(0, 1, 05);
 
             InitializeComponent();
         }
@@ -48,28 +52,35 @@ namespace Scheduler
 
         private void WindowClosed(object sender, EventArgs e) => CloseApplication();
 
-        private void ButtonPlayClick(object sender, RoutedEventArgs e) 
+        private void ButtonPlayClick(object sender, RoutedEventArgs e)
         {
-            
-
-
+            //iconButtonPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
             WorkTimer();
         }
 
         private void ButtonDeleteClick(object sender, RoutedEventArgs e) => _compositeRoot.RemoveData(dgTodoList.SelectedIndex);
 
-        private void DgTodoListSelectedCellsChanged(object sender, System.Windows.Controls.SelectedCellsChangedEventArgs e)
-        {
-
-        }
+        private void DgTodoListSelectedCellsChanged(object sender, System.Windows.Controls.SelectedCellsChangedEventArgs e) { }
 
         private async void WorkTimer()
         {
-            _timer = new DispatcherTimer();
-            _timer.Interval = new TimeSpan(0, 1, 05);
 
 
-            while (_timer.Interval.TotalSeconds > 0)
+            if (_isPlay == false)
+            {
+                iconButtonPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+                _isPlay = true;
+            }
+            else
+            {
+                iconButtonPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+                _isPlay = false;
+            }
+            
+
+
+
+            while (_timer.Interval.TotalSeconds > 0 && _isPlay == true)
             {
                 await Task.Delay(1000);
                 try
