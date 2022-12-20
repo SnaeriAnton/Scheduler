@@ -67,6 +67,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\Notifier.cs" />
+    <Compile Include="Models\Timer\Timer.cs" />
+    <Compile Include="Models\Timer\TimersController.cs" />
     <Compile Include="Models\ToDoListManager.cs" />
     <Compile Include="Models\TodoModel.cs" />
     <Compile Include="Services\FileIOService.cs" />
