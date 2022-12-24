@@ -33,7 +33,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="date" Binding="{Binding Path = CreationDate}" IsReadOnly="true" Header="Дата создания" Width="200"/>
                 <DataGridCheckBoxColumn x:Name="status" Binding="{Binding Path = Status, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="false" Header="Статус" Width="90"/>
-                <DataGridTextColumn x:Name="timer" Binding="{Binding Path = Timer}" IsReadOnly="false" Header="Таймер" Width="100"/>
+                <DataGridTextColumn x:Name="timer" Binding="{Binding Path = Time}" IsReadOnly="false" Header="Таймер" Width="100"/>
                 <DataGridTextColumn x:Name="task" Binding="{Binding Path = Task}" IsReadOnly="false" Header="Задача" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>

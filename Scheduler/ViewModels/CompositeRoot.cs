@@ -3,7 +3,6 @@ using Scheduler.Services;
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Windows;
 
 namespace Scheduler.ViewModels
 {
@@ -14,13 +13,16 @@ namespace Scheduler.ViewModels
 
         public IEnumerable ToDoList => _toDoListManager.ToDoList;
 
-        public event Action<bool> LoadedData;
-        public event Action<bool> SavedDat;
+        public event Action<bool, string> ErrorOccurred;
+        public event Action<string> ChangedTime;
 
         public CompositeRoot()
         {
             _toDoListManager = new ToDoListManager();
             _fileIOService = new FileIOService();
+
+            _toDoListManager.ErrorOccurred += OnErrorOccurred;
+            _toDoListManager.ChangedTime += OnChangedTime;
         }
 
         public void LoadData()
@@ -31,14 +33,18 @@ namespace Scheduler.ViewModels
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message);
-                LoadedData?.Invoke(false);
+                OnErrorOccurred(false, exception.Message);
             }
 
             _toDoListManager.ChangeList(TodoDataListListChanged);
         }
 
-        public void Close() => _toDoListManager.Stop(TodoDataListListChanged);
+        public void Close()
+        {
+            _toDoListManager.ErrorOccurred -= OnErrorOccurred;
+            _toDoListManager.ChangedTime -= OnChangedTime;
+            _toDoListManager.Stop(TodoDataListListChanged);
+        }
 
         public void RemoveData(int index) => _toDoListManager.RemoveRecord(index);
 
@@ -52,10 +58,13 @@ namespace Scheduler.ViewModels
                 }
                 catch (Exception exception)
                 {
-                    MessageBox.Show(exception.Message);
-                    SavedDat?.Invoke(false);
+                    OnErrorOccurred(false, exception.Message);
                 }
             }
         }
+
+        private void OnErrorOccurred(bool value, string message) => ErrorOccurred?.Invoke(false, message);
+
+        private void OnChangedTime(string time) => ChangedTime?.Invoke(time);
     }
 }
