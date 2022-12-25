@@ -10,19 +10,19 @@ namespace Scheduler.Services
     {
         private readonly string PATH = $"{Environment.CurrentDirectory}\\todoDateList.json";
 
-        public BindingList<TodoModel> loadData()
+        public BindingList<TaskModel> loadData()
         {
             var fileExists = File.Exists(PATH);
             if (!fileExists)
             {
                 File.CreateText(PATH).Dispose();
-                return new BindingList<TodoModel>();
+                return new BindingList<TaskModel>();
             }
 
             using (var reader = File.OpenText(PATH))
             {
                 var fileText = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<BindingList<TodoModel>>(fileText);
+                return JsonConvert.DeserializeObject<BindingList<TaskModel>>(fileText);
             }
         }
 

@@ -68,8 +68,8 @@
     </ApplicationDefinition>
     <Compile Include="Models\Notifier.cs" />
     <Compile Include="Models\Timer.cs" />
-    <Compile Include="Models\ToDoListManager.cs" />
-    <Compile Include="Models\TodoModel.cs" />
+    <Compile Include="Models\TaskModelManager.cs" />
+    <Compile Include="Models\TaskModel.cs" />
     <Compile Include="Services\FileIOService.cs" />
     <Compile Include="ViewModels\CompositeRoot.cs" />
     <Page Include="MainWindow.xaml">

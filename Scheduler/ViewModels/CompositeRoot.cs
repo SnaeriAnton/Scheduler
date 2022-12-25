@@ -9,44 +9,52 @@ namespace Scheduler.ViewModels
     class CompositeRoot
     {
         private FileIOService _fileIOService;
-        private ToDoListManager _toDoListManager;
+        private TaskModelManager _taskModelManager;
 
-        public IEnumerable ToDoList => _toDoListManager.ToDoList;
+        public IEnumerable Tasks => _taskModelManager.Tasks;
 
         public event Action<bool, string> ErrorOccurred;
         public event Action<string> ChangedTime;
+        public event Action<bool> ChangedStatusTimer;
+        public event Action<string> TimerIsOver;
 
         public CompositeRoot()
         {
-            _toDoListManager = new ToDoListManager();
+            _taskModelManager = new TaskModelManager();
             _fileIOService = new FileIOService();
 
-            _toDoListManager.ErrorOccurred += OnErrorOccurred;
-            _toDoListManager.ChangedTime += OnChangedTime;
+            _taskModelManager.ErrorOccurred += OnErrorOccurred;
+            _taskModelManager.ChangedTime += OnChangedTime;
+            _taskModelManager.ChangedStatusTimer += OnChangedStatusTimer;
+            _taskModelManager.TimerIsOver += OnTimerIsOver;
         }
 
         public void LoadData()
         {
             try
             {
-                _toDoListManager.SetList(_fileIOService.loadData());
+                _taskModelManager.SetList(_fileIOService.loadData());
             }
             catch (Exception exception)
             {
                 OnErrorOccurred(false, exception.Message);
             }
 
-            _toDoListManager.ChangeList(TodoDataListListChanged);
+            _taskModelManager.ChangeList(TodoDataListListChanged);
         }
 
         public void Close()
         {
-            _toDoListManager.ErrorOccurred -= OnErrorOccurred;
-            _toDoListManager.ChangedTime -= OnChangedTime;
-            _toDoListManager.Stop(TodoDataListListChanged);
+            _taskModelManager.ErrorOccurred -= OnErrorOccurred;
+            _taskModelManager.ChangedTime -= OnChangedTime;
+            _taskModelManager.ChangedStatusTimer -= OnChangedStatusTimer;
+            _taskModelManager.TimerIsOver -= OnTimerIsOver;
+            _taskModelManager.Stop(TodoDataListListChanged);
         }
 
-        public void RemoveData(int index) => _toDoListManager.RemoveRecord(index);
+        public void RunTimer(int index) => _taskModelManager.RunTimer(index);
+
+        public void RemoveData(int index) => _taskModelManager.RemoveRecord(index);
 
         private void TodoDataListListChanged(object sender, ListChangedEventArgs e)
         {
@@ -66,5 +74,9 @@ namespace Scheduler.ViewModels
         private void OnErrorOccurred(bool value, string message) => ErrorOccurred?.Invoke(false, message);
 
         private void OnChangedTime(string time) => ChangedTime?.Invoke(time);
+
+        private void OnChangedStatusTimer(bool value) => ChangedStatusTimer?.Invoke(value);
+
+        private void OnTimerIsOver(string message) => TimerIsOver?.Invoke(message);
     }
 }
