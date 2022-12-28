@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace Scheduler.Models
 {
-    class Timer
+    public class Timer
     {
         private DispatcherTimer _timer;
         private string _time = "00:00";
-        private string _tamplateFullTime = "00:00:00";
         private int _maxLengthString = 5;
         private char _colon = ':';
         private int _maxHours = 23;
-        private int _maxMinutes = 59;
-        private string _zeroOne = "0";
-        private string _zeroTwo = "00";
+        private int _maxMinutesAndSeconds = 59;
+        private string _oneZero = "0";
+        private string _twoZero = "00";
         private int _maxLengthTimeSigment = 2;
         private int _offsetLengthIndex = 1;
         private bool _isPlay = false;
@@ -22,45 +22,23 @@ namespace Scheduler.Models
         private int _hours = 0;
         private int _minutes = 0;
         private int _seconds = 0;
-        private string _currentTime = "00:00:00";
-        private int _colonPositionOnFullTime = 2;
+        private string _currentTime = "00:00:00"; 
         private string _message = "Timer is over!";
 
         public event Action<string> ChangedTime;
         public event Action<string> ErrorOccurred;
         public event Action<bool> ChangedStatus;
         public event Action<string> ChangedTimer;
-        public event Action<string> ChangedFullTime;
         public event Action<string> TimerIsOver;
 
         public bool Status => _isPlay;
-        public string CurrecntTime // переписать логику проверки объеденить currentTime с Time 
-        {
-            get { return _currentTime; }
-            set
-            {
-                if (value.Contains(_colon.ToString()) == false) { }
-                    _currentTime = _tamplateFullTime;
 
-                if (_currentTime != value)
-                    _currentTime = value;
-
-                SetSeconds(_currentTime);
-            }
-        }
-
-        public string Time //при изменение времени обнулять секунды
+        public string Time
         {
             get { return _time; }
             set
             {
-                if (_isPlay == true)
-                    return;
-
                 if (value.Contains(_colon.ToString()) == false)
-                    return;
-
-                if (value.Length > _maxLengthString)
                     return;
 
                 for (int i = 0; i < value.Length; i++)
@@ -68,35 +46,28 @@ namespace Scheduler.Models
                         if (int.TryParse(value[i].ToString(), out int _) == false)
                             return;
 
-                string newValue = "";
-                int indexColon = 0;
-                string str = "";
-
-                for (int i = 0; i < value.Length; i++)
-                    if (value[i] == _colon)
-                        indexColon = i;
-
-                for (int i = 0; i < value.Length; i++)
+                int countColons = 0;
+                if (value.Length > _maxLengthString)
                 {
-                    if (value[i] == _colon)
-                        break;
+                    for (int i = 0; i < value.Length; i++)
+                        if (value[i] == _colon)
+                            countColons++;
 
-                    str += value[i];
+                    if (countColons == 1)
+                        return;
                 }
+                else
+                    value += _colon.ToString() + _twoZero;
 
-                CheckValidateNumber(ref str, ref _hours, _maxHours);
-                newValue += AddMissingSigns(str);
+                string newValue = "";
+                int lastIndex = 0;
 
-                str = "";
-                newValue += _colon;
-
-                for (int i = indexColon + _offsetLengthIndex; i < value.Length; i++)
-                    str += value[i];
-
-                CheckValidateNumber(ref str, ref _minutes, _maxMinutes);
-                newValue += AddMissingSigns(str);
+                newValue += BranchValue(value, lastIndex, ref lastIndex, _maxHours, ref _hours) + _colon;
+                newValue += BranchValue(value, lastIndex + _offsetLengthIndex, ref lastIndex, _maxMinutesAndSeconds, ref _minutes) + _colon;
+                newValue += BranchValue(value, lastIndex + _offsetLengthIndex, ref lastIndex, _maxMinutesAndSeconds, ref _seconds);
 
                 value = newValue;
+
 
                 if (_time != value)
                     _time = value;
@@ -114,44 +85,35 @@ namespace Scheduler.Models
 
         public void Stop() => Work(false);
 
-        private void ResetSeconds() //при изменение времени обнулять секунды
+        private string BranchValue(string value, int index, ref int LastIndex, int checkNumber, ref int unitTime)
         {
-            for (int i = 0; i < _time.Length; i++)
+            string str = "";
+
+            for (int i = index; i < value.Length; i++)
             {
-                if (_time[i] != CurrecntTime[i])
+                if (value[i] == _colon)
                 {
-                    ChangedFullTime?.Invoke(_currentTime);
-                    return;
+                    LastIndex = i;
+                    break;
                 }
-            }
-        }
 
-        private void SetSeconds(string strTime)
-        {
-            string strSeconds = "";
-            int counColon = 0;
-
-            for (int i = 0; i < strTime.Length; i++) 
-            {
-                if (counColon == _colonPositionOnFullTime)
-                    strSeconds += strTime[i];
-                else if (strTime[i] == _colon)
-                    counColon++;
+                str += value[i];
             }
 
-            _seconds = int.Parse(strSeconds);
+            CheckValidateNumber(ref str, ref unitTime, checkNumber);
+            return AddMissingSigns(str);
         }
 
         private string AddMissingSigns(string strNumber)
         {
             if (strNumber.Length == 0)
             {
-                string intermediateResult = _zeroTwo;
+                string intermediateResult = _twoZero;
                 return intermediateResult;
             }
             else if (strNumber.Length != _maxLengthTimeSigment)
             {
-                string intermediateResult = _zeroOne + strNumber;
+                string intermediateResult = _oneZero + strNumber;
                 return intermediateResult;
             }
             else
@@ -175,7 +137,7 @@ namespace Scheduler.Models
 
         private async void Work(bool value)
         {
-            if (_hours == 0 && _minutes == 0 && _seconds == 0)
+            if (_hours == 0 && _minutes == 0 && _seconds == 0) //отрефакторить 
                 return;
 
             if (value == true)
@@ -187,9 +149,13 @@ namespace Scheduler.Models
 
             _timer.Interval = new TimeSpan(_hours, _minutes, _seconds);
 
-            while (_timer.Interval.TotalSeconds > 0 && _isPlay == true) // подумать как мгновенно остановить таймер
+            while (_timer.Interval.TotalSeconds > 0 && _isPlay == true) 
             {
                 await Task.Delay(_dilay);
+
+                if (_isPlay == false)
+                    return;
+
                 try
                 {
                     _timer.Interval -= TimeSpan.FromSeconds(1);
@@ -213,28 +179,7 @@ namespace Scheduler.Models
             }
 
             ChangedTime?.Invoke(_currentTime);
-            ChangedFullTime?.Invoke(_currentTime);
-            Time = CutSeconds(_currentTime);
-        }
-
-        private string CutSeconds(string time)
-        {
-            string newString = "";
-            bool isColon = false;
-
-            for (int i = 0; i < time.Length; i++) 
-            {
-                if (time[i] == _colon)
-                {
-                    if (isColon == true)
-                        break;
-
-                    isColon = true;
-                }
-
-                newString += time[i].ToString();
-            }
-            return newString;
+            Time = _currentTime;
         }
     }
 }

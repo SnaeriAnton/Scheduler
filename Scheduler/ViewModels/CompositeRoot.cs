@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace Scheduler.ViewModels
 {
-    class CompositeRoot
+    public class CompositeRoot
     {
         private FileIOService _fileIOService;
         private TaskModelManager _taskModelManager;

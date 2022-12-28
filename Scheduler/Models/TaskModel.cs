@@ -3,7 +3,7 @@ using System;
 
 namespace Scheduler.Models
 {
-    class TaskModel : Notifier // выделить в отдельный класс и отвязать логику таймера она тут излишняя
+    class TaskModel : Notifier
     {
         [JsonProperty(PropertyName = "creationDate")]
         public DateTime CreationDate { get; private set; } = DateTime.Now;
@@ -55,34 +55,16 @@ namespace Scheduler.Models
             }
         }
 
-        [JsonProperty(PropertyName = "fullTime")]
-        public string FullTime
-        {
-            get { return _timer.CurrecntTime; }
-            set
-            {
-                if (_timer.CurrecntTime != value)
-                    _timer.CurrecntTime = value;
-
-                NotifyPropertyChanged("FullTime");
-            }
-        }
-
         public TaskModel()
         {
             _timer.ChangedTimer += OnChangedTimer;
-            _timer.ChangedFullTime += OnChangedFullTime;
         }
 
         public void Close()
         {
             _timer.ChangedTimer -= OnChangedTimer;
-            _timer.ChangedFullTime -= OnChangedFullTime;
         }
 
         private void OnChangedTimer(string time) => Time = time;
-
-        private void OnChangedFullTime(string time) => FullTime = time;
-
     }
 }

@@ -8,6 +8,7 @@ namespace Scheduler.Models
     class TaskModelManager
     {
         private BindingList<TaskModel> _taskDataList;
+        private Reminder _reminder;
 
         public event Action<string> ChangedTime;
         public event Action<bool, string> ErrorOccurred;
@@ -17,8 +18,17 @@ namespace Scheduler.Models
         public IEnumerable Tasks => _taskDataList;
         public int Count => _taskDataList.Count;
 
+        public TaskModelManager()
+        {
+            _reminder = new Reminder();
+        }
+
         public void SetList(BindingList<TaskModel> toDoList)
         {
+            _reminder.Play();
+            _reminder.TimerIsOver += OnTimerIsOver;
+            _reminder.ErrorOccurred += OnErrorOccurred;
+
             _taskDataList = toDoList;
 
             Subscride();
@@ -46,6 +56,10 @@ namespace Scheduler.Models
 
         public void Stop(Action<object, ListChangedEventArgs> method)
         {
+            _reminder.Stop();
+            _reminder.TimerIsOver -= OnTimerIsOver;
+            _reminder.ErrorOccurred -= OnErrorOccurred;
+
             _taskDataList.ListChanged -= method.Invoke;
             _taskDataList.ListChanged -= OnChangedList;
 
