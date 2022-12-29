@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Media;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -23,7 +24,8 @@ namespace Scheduler.Models
         private int _minutes = 0;
         private int _seconds = 0;
         private string _currentTime = "00:00:00"; 
-        private string _message = "Timer is over!";
+        private string _message = "Время вышло!";
+        SoundPlayer _sound = new SoundPlayer();
 
         public event Action<string> ChangedTime;
         public event Action<string> ErrorOccurred;
@@ -78,12 +80,21 @@ namespace Scheduler.Models
 
         public Timer()
         {
+            _sound.SoundLocation = "chpok.wav";
             _timer = new DispatcherTimer();
         }
 
-        public void Play() => Work(true);
+        public void Play()
+        {
+            _sound.Stop();
+            Work(true);
+        }
 
-        public void Stop() => Work(false);
+        public void Stop()
+        {
+            _sound.Stop();
+            Work(false);
+        }
 
         private string BranchValue(string value, int index, ref int LastIndex, int checkNumber, ref int unitTime)
         {
@@ -173,6 +184,7 @@ namespace Scheduler.Models
 
             if (_hours == 0 && _minutes == 0 && _seconds == 0)
             {
+                _sound.Play();
                 _isPlay = false;
                 ChangedStatus?.Invoke(_isPlay);
                 TimerIsOver?.Invoke(_message);

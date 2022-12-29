@@ -19,8 +19,9 @@ namespace Scheduler
         {
             _compositeRoot.ErrorOccurred += OnClosed;
             _compositeRoot.ChangedTime += OnSetTime;
-            _compositeRoot.ChangedStatusTimer += ChangeButtonPlayIcon;
-            _compositeRoot.TimerIsOver += ShowMessage;
+            _compositeRoot.ChangedStatusTimer += OnChangeButtonPlayIcon;
+            _compositeRoot.TimerIsOver += OnShowMessage;
+            _compositeRoot.ReminderIsOver += OnReminderIsOver;
 
             _compositeRoot.LoadData();
 
@@ -40,8 +41,9 @@ namespace Scheduler
         {
             _compositeRoot.ErrorOccurred -= OnClosed;
             _compositeRoot.ChangedTime -= OnSetTime;
-            _compositeRoot.ChangedStatusTimer -= ChangeButtonPlayIcon;
-            _compositeRoot.TimerIsOver -= ShowMessage;
+            _compositeRoot.ChangedStatusTimer -= OnChangeButtonPlayIcon;
+            _compositeRoot.TimerIsOver -= OnShowMessage;
+            _compositeRoot.ReminderIsOver -= OnReminderIsOver;
 
             _compositeRoot.Close();
 
@@ -60,7 +62,7 @@ namespace Scheduler
 
         private void OnSetTime(string time) => timerView.Text = time;
 
-        private void ChangeButtonPlayIcon(bool value)
+        private void OnChangeButtonPlayIcon(bool value)
         {
             if (value == false)
                 iconButtonPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
@@ -68,6 +70,14 @@ namespace Scheduler
                 iconButtonPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
         }
 
-        private void ShowMessage(string message) => MessageBox.Show(message);
+        private void OnShowMessage(string message) => MessageBox.Show(message);
+
+        private void OnReminderIsOver(string message)
+        {
+            MessageBoxResult result = MessageBox.Show(message);
+
+            if (result == MessageBoxResult.OK )
+                _compositeRoot.RestartRemonder();
+        }
     }
 }

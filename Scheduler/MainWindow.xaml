@@ -7,7 +7,8 @@
         
         xmlns:local="clr-namespace:Scheduler"
         mc:Ignorable="d"
-        Title="Scheduler" Width="1200" Height="800" Loaded="WindowLoaded" Closed="WindowClosed">
+        Title="Scheduler" Width="1200" Height="800" Loaded="WindowLoaded" Closed="WindowClosed"
+        Topmost="True">
     <Grid Background="#ffdadada">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="556*"/>

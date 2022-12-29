@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
@@ -9,30 +10,37 @@ namespace Scheduler.Models
         private int _hours = 0;
         private int _minutes = 0;
         private int _seconds = 0;
-        private int _timerMinutes = 1;
+        private int _timerMinutes = 60;
         private int _dilay = 1000;
         private DispatcherTimer _timer;
         private string _message = "Вернись к работе";
+        SoundPlayer _sound = new SoundPlayer();
 
         public event Action<string> ErrorOccurred;
         public event Action<string> TimerIsOver;
 
         public Reminder()
         {
+            _sound.SoundLocation = "alarm.wav";
             _timer = new DispatcherTimer();
         }
 
         public void Play()
         {
-            _timer.Interval = new TimeSpan(_hours, _timerMinutes, _seconds); // не работает
+            _sound.Stop();
+            _timer.Interval = new TimeSpan(_hours, _minutes, _timerMinutes);
             Work(true);
         }
 
-        public void Stop() => Work(false);
+        public void Stop()
+        {
+            _sound.Stop();
+            Work(false);
+        }
 
         private async void Work(bool value)
         {
-            if (_hours == 0 && _minutes == 0 && _seconds == 0)
+            if (_timer.Interval.TotalSeconds == 0)
                 return;
 
             while (_timer.Interval.TotalSeconds > 0 && value == true)
@@ -56,7 +64,13 @@ namespace Scheduler.Models
             }
 
             if (_hours == 0 && _minutes == 0 && _seconds == 0)
+            {
+                _sound.PlayLooping();
                 TimerIsOver?.Invoke(_message);
+                return;
+            }
+
+            return;
         }
     }
 }

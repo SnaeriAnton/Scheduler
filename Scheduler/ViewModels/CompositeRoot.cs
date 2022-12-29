@@ -17,6 +17,7 @@ namespace Scheduler.ViewModels
         public event Action<string> ChangedTime;
         public event Action<bool> ChangedStatusTimer;
         public event Action<string> TimerIsOver;
+        public event Action<string> ReminderIsOver;
 
         public CompositeRoot()
         {
@@ -27,6 +28,8 @@ namespace Scheduler.ViewModels
             _taskModelManager.ChangedTime += OnChangedTime;
             _taskModelManager.ChangedStatusTimer += OnChangedStatusTimer;
             _taskModelManager.TimerIsOver += OnTimerIsOver;
+            _taskModelManager.ReminderIsOver += OnReminderIsOver;
+            _taskModelManager.StartReminder();
         }
 
         public void LoadData()
@@ -49,8 +52,11 @@ namespace Scheduler.ViewModels
             _taskModelManager.ChangedTime -= OnChangedTime;
             _taskModelManager.ChangedStatusTimer -= OnChangedStatusTimer;
             _taskModelManager.TimerIsOver -= OnTimerIsOver;
+            _taskModelManager.ReminderIsOver -= OnReminderIsOver;
             _taskModelManager.Stop(TodoDataListListChanged);
         }
+
+        public void RestartRemonder() => _taskModelManager.StartReminder();
 
         public void RunTimer(int index) => _taskModelManager.RunTimer(index);
 
@@ -78,5 +84,7 @@ namespace Scheduler.ViewModels
         private void OnChangedStatusTimer(bool value) => ChangedStatusTimer?.Invoke(value);
 
         private void OnTimerIsOver(string message) => TimerIsOver?.Invoke(message);
+
+        private void OnReminderIsOver(string message) => ReminderIsOver?.Invoke(message);
     }
 }

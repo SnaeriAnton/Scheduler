@@ -14,6 +14,7 @@ namespace Scheduler.Models
         public event Action<bool, string> ErrorOccurred;
         public event Action<bool> ChangedStatusTimer;
         public event Action<string> TimerIsOver;
+        public event Action<string> ReminderIsOver;
 
         public IEnumerable Tasks => _taskDataList;
         public int Count => _taskDataList.Count;
@@ -25,13 +26,18 @@ namespace Scheduler.Models
 
         public void SetList(BindingList<TaskModel> toDoList)
         {
-            _reminder.Play();
-            _reminder.TimerIsOver += OnTimerIsOver;
-            _reminder.ErrorOccurred += OnErrorOccurred;
-
             _taskDataList = toDoList;
 
             Subscride();
+
+            _reminder.TimerIsOver += OnReminderIsOver;
+            _reminder.ErrorOccurred += OnErrorOccurred;
+        }
+
+        public void StartReminder()
+        {
+            _reminder.Play();
+            
         }
 
         public void RemoveRecord(int index)
@@ -57,7 +63,7 @@ namespace Scheduler.Models
         public void Stop(Action<object, ListChangedEventArgs> method)
         {
             _reminder.Stop();
-            _reminder.TimerIsOver -= OnTimerIsOver;
+            _reminder.TimerIsOver -= OnReminderIsOver;
             _reminder.ErrorOccurred -= OnErrorOccurred;
 
             _taskDataList.ListChanged -= method.Invoke;
@@ -121,6 +127,7 @@ namespace Scheduler.Models
         private void OnChangedStatusTimer(bool value) => ChangedStatusTimer?.Invoke(value);
 
         private void OnTimerIsOver(string message) => TimerIsOver?.Invoke(message);
+        private void OnReminderIsOver(string message) => ReminderIsOver?.Invoke(message);
 
         private void OnChangedList(object sender, ListChangedEventArgs e)
         {
