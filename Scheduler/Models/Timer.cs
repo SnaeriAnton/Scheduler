@@ -9,7 +9,7 @@ namespace Scheduler.Models
     public class Timer
     {
         private DispatcherTimer _timer;
-        private string _time = "00:00";
+        private string _time = "00:00:00";
         private int _maxLengthString = 5;
         private char _colon = ':';
         private int _maxHours = 23;
