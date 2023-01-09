@@ -26,6 +26,8 @@ namespace Scheduler
             _compositeRoot.LoadData();
 
             dgTaskList.ItemsSource = _compositeRoot.Tasks;
+
+            
         }
 
         private void OnClosed(bool value, string message)
@@ -58,8 +60,6 @@ namespace Scheduler
 
         private void ButtonDeleteClick(object sender, RoutedEventArgs e) => _compositeRoot.RemoveData(dgTaskList.SelectedIndex);
 
-        private void DgTodoListSelectedCellsChanged(object sender, System.Windows.Controls.SelectedCellsChangedEventArgs e) { } // отображение цветом выбронной зоны
-
         private void OnSetTime(string time) => timerView.Text = time;
 
         private void OnChangeButtonPlayIcon(bool value)
@@ -74,10 +74,14 @@ namespace Scheduler
 
         private void OnReminderIsOver(string message)
         {
+            Application.Current.MainWindow.Topmost = true;
             MessageBoxResult result = MessageBox.Show(message);
 
             if (result == MessageBoxResult.OK )
+            {
+                Application.Current.MainWindow.Topmost = false;
                 _compositeRoot.RestartRemonder();
+            }
         }
     }
 }

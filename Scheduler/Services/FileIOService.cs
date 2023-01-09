@@ -8,7 +8,7 @@ namespace Scheduler.Services
 {
     class FileIOService
     {
-        private readonly string PATH = $"{Environment.CurrentDirectory}\\todoDateList.json";
+        private readonly string PATH = $"{Environment.CurrentDirectory}\\taskDateList.json";
 
         public BindingList<TaskModel> loadData()
         {

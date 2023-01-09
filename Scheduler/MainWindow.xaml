@@ -7,8 +7,8 @@
         
         xmlns:local="clr-namespace:Scheduler"
         mc:Ignorable="d"
-        Title="Scheduler" Width="1200" Height="800" Loaded="WindowLoaded" Closed="WindowClosed">
-    <!--Topmost="True">-->
+        Title="Scheduler" MaxWidth="1200" MinWidth="1200" MaxHeight="800" MinHeight="800" Width="1200" Height="800" Loaded="WindowLoaded" Closed="WindowClosed"
+    Topmost="false">
     <Grid Background="#ffdadada">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="556*"/>
@@ -21,6 +21,9 @@
             <RowDefinition Height="60" />
         </Grid.RowDefinitions>
 
+
+
+
         <Border Grid.Row="0" Margin="3" Background="White" Padding="30" CornerRadius="50" Grid.ColumnSpan="3">
             <TextBlock x:Name="timerView" Foreground="red" Text="00:00:00" FontSize="260" FontWeight="Bold" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
@@ -31,7 +34,45 @@
         <Border Grid.Row="2" Margin="3" Background="White" Padding="30" CornerRadius="5" Grid.ColumnSpan="3">
         </Border>
 
-        <DataGrid x:Name="dgTaskList" Grid.Row="1" FontSize="17" FontWeight="Bold" Grid.ColumnSpan="3" AutoGenerateColumns="False" SelectedCellsChanged="DgTodoListSelectedCellsChanged" >
+        <DataGrid x:Name="dgTaskList" Grid.Row="1" FontSize="17" FontWeight="Bold" Grid.ColumnSpan="3" AutoGenerateColumns="False" >
+            
+<!--Чет надо придумать-->
+            <DataGrid.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Setter Property="Padding" Value="{Binding RelativeSource={RelativeSource Self}, Path=(materialDesign:DataGridAssist.CellPadding)}" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
+                    <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                <Grid>
+                                    <Border
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True" />
+                                    <ContentPresenter Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="Bisque" />
+                        </MultiDataTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value=".56" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="date" Binding="{Binding Path = CreationDate}" IsReadOnly="true" Header="Дата создания" Width="200"/>
                 <DataGridCheckBoxColumn x:Name="status" Binding="{Binding Path = Status, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="false" Header="Статус" Width="90"/>
