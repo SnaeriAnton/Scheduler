@@ -13,26 +13,35 @@ namespace Scheduler.Services
         public BindingList<TaskModel> loadData()
         {
             var fileExists = File.Exists(PATH);
+
             if (!fileExists)
-            {
-                File.CreateText(PATH).Dispose();
-                return new BindingList<TaskModel>();
-            }
+                return Creat();
 
             using (var reader = File.OpenText(PATH))
             {
                 var fileText = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<BindingList<TaskModel>>(fileText);
+
+                var taskDataList = JsonConvert.DeserializeObject<BindingList<TaskModel>>(fileText);
+                if (taskDataList != null)
+                    return taskDataList;
             }
+
+            return Creat();
         }
 
-        public void SaveData(object todoDataList)
+        public void SaveData(object taskDataList)
         {
             using (StreamWriter writer = File.CreateText(PATH))
             {
-                string output = JsonConvert.SerializeObject(todoDataList);
+                string output = JsonConvert.SerializeObject(taskDataList);
                 writer.Write(output);
             }
+        }
+
+        private BindingList<TaskModel> Creat()
+        {
+            File.CreateText(PATH).Dispose();
+            return new BindingList<TaskModel>();
         }
     }
 }
