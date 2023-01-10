@@ -5,7 +5,7 @@ using System.Windows.Threading;
 
 namespace Scheduler.Models
 {
-    public class Reminder
+    public class Reminder //наследование 
     {
         private int _hours = 0;
         private int _minutes = 0;

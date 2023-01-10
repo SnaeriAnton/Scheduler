@@ -15,7 +15,10 @@ namespace Scheduler.Services
             var fileExists = File.Exists(PATH);
 
             if (!fileExists)
-                return Creat();
+            {
+                File.CreateText(PATH).Dispose();
+                return new BindingList<TaskModel>();
+            }
 
             using (var reader = File.OpenText(PATH))
             {
@@ -24,9 +27,10 @@ namespace Scheduler.Services
                 var taskDataList = JsonConvert.DeserializeObject<BindingList<TaskModel>>(fileText);
                 if (taskDataList != null)
                     return taskDataList;
+                else
+                    return new BindingList<TaskModel>();
             }
 
-            return Creat();
         }
 
         public void SaveData(object taskDataList)
@@ -36,12 +40,6 @@ namespace Scheduler.Services
                 string output = JsonConvert.SerializeObject(taskDataList);
                 writer.Write(output);
             }
-        }
-
-        private BindingList<TaskModel> Creat()
-        {
-            File.CreateText(PATH).Dispose();
-            return new BindingList<TaskModel>();
         }
     }
 }
