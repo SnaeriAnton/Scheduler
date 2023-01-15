@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Media;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Threading;
 
 namespace Scheduler.Models
 {
     public class Timer
     {
-        private DispatcherTimer _timer;
+        protected int Hours = 0;
+        protected int Minutes = 0;
+        protected int Seconds = 0;
+        protected int Dilay = 1000;
+        protected DispatcherTimer DispatcherTimer;
+        protected SoundPlayer Sound = new SoundPlayer();
+        protected string Message;
         private string _time = "00:00:00";
         private int _maxLengthString = 5;
         private char _colon = ':';
@@ -19,19 +24,13 @@ namespace Scheduler.Models
         private int _maxLengthTimeSigment = 2;
         private int _offsetLengthIndex = 1;
         private bool _isPlay = false;
-        private int _dilay = 1000;
-        private int _hours = 0;
-        private int _minutes = 0;
-        private int _seconds = 0;
         private string _currentTime = "00:00:00"; 
-        private string _message = "Время вышло!";
-        SoundPlayer _sound = new SoundPlayer();
 
         public event Action<string> ChangedTime;
-        public event Action<string> ErrorOccurred;
+        public virtual event Action<string> ErrorOccurred;
         public event Action<bool> ChangedStatus;
         public event Action<string> ChangedTimer;
-        public event Action<string> TimerIsOver;
+        public virtual event Action<string> TimerIsOver;
 
         public bool Status => _isPlay;
 
@@ -64,9 +63,9 @@ namespace Scheduler.Models
                 string newValue = "";
                 int lastIndex = 0;
 
-                newValue += BranchValue(value, lastIndex, ref lastIndex, _maxHours, ref _hours) + _colon;
-                newValue += BranchValue(value, lastIndex + _offsetLengthIndex, ref lastIndex, _maxMinutesAndSeconds, ref _minutes) + _colon;
-                newValue += BranchValue(value, lastIndex + _offsetLengthIndex, ref lastIndex, _maxMinutesAndSeconds, ref _seconds);
+                newValue += BranchValue(value, lastIndex, ref lastIndex, _maxHours, ref Hours) + _colon;
+                newValue += BranchValue(value, lastIndex + _offsetLengthIndex, ref lastIndex, _maxMinutesAndSeconds, ref Minutes) + _colon;
+                newValue += BranchValue(value, lastIndex + _offsetLengthIndex, ref lastIndex, _maxMinutesAndSeconds, ref Seconds);
 
                 value = newValue;
 
@@ -80,20 +79,38 @@ namespace Scheduler.Models
 
         public Timer()
         {
-            _sound.SoundLocation = "chpok.wav";
-            _timer = new DispatcherTimer();
+            Message = "Время вышло!";
+            Sound.SoundLocation = "chpok.wav";
+            DispatcherTimer = new DispatcherTimer();
         }
 
-        public void Play()
+        public virtual void Play()
         {
-            _sound.Stop();
+            Sound.Stop();
             Work(true);
         }
 
         public void Stop()
         {
-            _sound.Stop();
+            Sound.Stop();
             Work(false);
+        }
+
+        protected void Ticking()
+        {
+            try
+            {
+                DispatcherTimer.Interval -= TimeSpan.FromSeconds(1);
+                Hours = DispatcherTimer.Interval.Hours;
+                Minutes = DispatcherTimer.Interval.Minutes;
+                Seconds = DispatcherTimer.Interval.Seconds;
+                _currentTime = Hours + _colon.ToString() + Minutes + _colon.ToString() + Seconds;
+                ChangedTime?.Invoke(_currentTime);
+            }
+            catch (Exception exception)
+            {
+                ErrorOccurred?.Invoke(exception.Message);
+            }
         }
 
         private string BranchValue(string value, int index, ref int LastIndex, int checkNumber, ref int unitTime)
@@ -146,9 +163,9 @@ namespace Scheduler.Models
             }
         }
 
-        private async void Work(bool value)
+        protected virtual async void Work(bool value)
         {
-            if (_hours == 0 && _minutes == 0 && _seconds == 0) //отрефакторить 
+            if (Hours == 0 && Minutes == 0 && Seconds == 0) //отрефакторить 
                 return;
 
             if (value == true)
@@ -158,36 +175,24 @@ namespace Scheduler.Models
 
             ChangedStatus?.Invoke(_isPlay);
 
-            _timer.Interval = new TimeSpan(_hours, _minutes, _seconds);
+            DispatcherTimer.Interval = new TimeSpan(Hours, Minutes, Seconds);
 
-            while (_timer.Interval.TotalSeconds > 0 && _isPlay == true) 
+            while (DispatcherTimer.Interval.TotalSeconds > 0 && _isPlay == true) 
             {
-                await Task.Delay(_dilay);
+                await Task.Delay(Dilay);
 
                 if (_isPlay == false)
                     return;
 
-                try
-                {
-                    _timer.Interval -= TimeSpan.FromSeconds(1);
-                    _hours = _timer.Interval.Hours;
-                    _minutes = _timer.Interval.Minutes;
-                    _seconds = _timer.Interval.Seconds;
-                    _currentTime = _hours + _colon.ToString() + _minutes + _colon.ToString() + _seconds;
-                    ChangedTime?.Invoke(_currentTime);
-                }
-                catch (Exception exception)
-                {
-                    ErrorOccurred?.Invoke(exception.Message);
-                }
+                Ticking();
             }
 
-            if (_hours == 0 && _minutes == 0 && _seconds == 0)
+            if (Hours == 0 && Minutes == 0 && Seconds == 0)
             {
-                _sound.Play();
+                Sound.Play();
                 _isPlay = false;
                 ChangedStatus?.Invoke(_isPlay);
-                TimerIsOver?.Invoke(_message);
+                TimerIsOver?.Invoke(Message);
             }
 
             ChangedTime?.Invoke(_currentTime);
