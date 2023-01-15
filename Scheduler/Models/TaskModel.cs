@@ -13,6 +13,7 @@ namespace Scheduler.Models
         private Timer _timer = new Timer();
 
         public Timer Timer => _timer;
+        public event Action<bool, Timer> ChangedStatus;
 
         [JsonProperty(PropertyName = "status")]
         public bool Status
@@ -24,6 +25,7 @@ namespace Scheduler.Models
                 if (_status != value)
                     _status = value;
 
+                ChangedStatus?.Invoke(value, _timer);
                 NotifyPropertyChanged("Status");
             }
         }

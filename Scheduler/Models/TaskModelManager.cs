@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Windows;
 
 namespace Scheduler.Models
 {
@@ -13,6 +14,7 @@ namespace Scheduler.Models
         public event Action<string> ChangedTime;
         public event Action<bool, string> ErrorOccurred;
         public event Action<bool> ChangedStatusTimer;
+        public event Action<bool> ChangedStatus;
         public event Action<string> TimerIsOver;
         public event Action<string> ReminderIsOver;
 
@@ -73,13 +75,13 @@ namespace Scheduler.Models
             Unsubscride();
         }
 
-        public void RunTimer(int index)
+        public void RunTimer(int indexTask)
         {
-            CheakWorkTimers(index);
+            CheakWorkTimers(indexTask);
 
-            if (index < _taskDataList.Count && index >= 0)
+            if (indexTask < _taskDataList.Count && indexTask >= 0)
             {
-                Timer timer = _taskDataList[index].Timer;
+                Timer timer = _taskDataList[indexTask].Timer;
 
                 if (timer.Status == false)
                     timer.Play();
@@ -100,6 +102,19 @@ namespace Scheduler.Models
             return _emptyLine;
         }
 
+        public bool CheсkStatusTask(int indexTask)
+        {
+            if (indexTask > _taskDataList.Count - 1 || indexTask < 0)
+                return false;
+
+            TaskModel task = _taskDataList[indexTask];
+
+            if (task.Status == true || task.Time == "00:00:00")
+                return false;
+
+            return true;
+        }
+
         private void StopAllTimers()
         {
             foreach (var task in _taskDataList)
@@ -107,11 +122,11 @@ namespace Scheduler.Models
                     task.Timer.Stop();
         } 
 
-        private void CheakWorkTimers(int index)
+        private void CheakWorkTimers(int indexTask)
         {
             foreach (var task in _taskDataList)
                 if (task.Timer.Status == true)
-                    if (task != _taskDataList[index])
+                    if (task != _taskDataList[indexTask])
                         task.Timer.Stop();
         }
 
@@ -119,6 +134,7 @@ namespace Scheduler.Models
         {
             foreach (var task in _taskDataList)
             {
+                task.ChangedStatus += OnChangedStatus;
                 task.Timer.ChangedTime += OnChange;
                 task.Timer.ChangedStatus += OnChangedStatusTimer;
                 task.Timer.ErrorOccurred += OnErrorOccurred;
@@ -130,11 +146,21 @@ namespace Scheduler.Models
         {
             foreach (var task in _taskDataList)
             {
+                task.ChangedStatus -= OnChangedStatus;
                 task.Timer.ChangedTime -= OnChange;
                 task.Timer.ChangedStatus -= OnChangedStatusTimer;
                 task.Timer.ErrorOccurred -= OnErrorOccurred;
                 task.Timer.TimerIsOver -= OnTimerIsOver;
             }
+        }
+
+        private void OnChangedStatus(bool value, Timer timer)
+        {
+            if (value == true)
+                if (timer.Status == true)
+                    timer.Stop();
+            
+            ChangedStatus?.Invoke(value);
         }
 
         private void OnChange(string time) => ChangedTime?.Invoke(time);

@@ -18,11 +18,14 @@ namespace Scheduler
 
         private void Load()
         {
+            buttonDelete.IsEnabled = false;
+            buttonStartTimer.IsEnabled = false;
             _compositeRoot.ErrorOccurred += OnClosed;
             _compositeRoot.ChangedTime += OnSetTime;
             _compositeRoot.ChangedStatusTimer += OnChangeButtonPlayIcon;
             _compositeRoot.TimerIsOver += OnShowMessage;
             _compositeRoot.ReminderIsOver += OnReminderIsOver;
+            _compositeRoot.ChangedStatus += OnChangedStatus;
 
             _compositeRoot.LoadData();
 
@@ -50,6 +53,7 @@ namespace Scheduler
             _compositeRoot.ChangedStatusTimer -= OnChangeButtonPlayIcon;
             _compositeRoot.TimerIsOver -= OnShowMessage;
             _compositeRoot.ReminderIsOver -= OnReminderIsOver;
+            _compositeRoot.ChangedStatus -= OnChangedStatus;
 
             _compositeRoot.Close();
             Close();
@@ -67,7 +71,11 @@ namespace Scheduler
                 _viewTimer.ShowTask(_compositeRoot.GetTaskText());
         }
 
-        private void ButtonDeleteClick(object sender, RoutedEventArgs e) => _compositeRoot.RemoveData(dgTaskList.SelectedIndex);
+        private void ButtonDeleteClick(object sender, RoutedEventArgs e)
+        {
+            _compositeRoot.RemoveData(dgTaskList.SelectedIndex);
+            buttonDelete.IsEnabled = false;
+        }
 
         private void OnSetTime(string time)
         {
@@ -118,6 +126,23 @@ namespace Scheduler
             _viewTimer.Closing -= OnClosedViewTimerWindow;
             _viewTimer = null;
             buttonViewTimerWindow.IsEnabled = true;
+        }
+
+        private void SelectedCellsChanged(object sender, System.Windows.Controls.SelectedCellsChangedEventArgs e)
+        {
+            buttonDelete.IsEnabled = true;
+            if (_compositeRoot.CheсkStatusTask(dgTaskList.SelectedIndex) == true)
+                buttonStartTimer.IsEnabled = true;
+            else
+                buttonStartTimer.IsEnabled = false;
+        }
+
+        private void OnChangedStatus(bool value)
+        {
+            if (value == true)
+                buttonStartTimer.IsEnabled = false;
+            else
+                buttonStartTimer.IsEnabled = true;
         }
     }
 }

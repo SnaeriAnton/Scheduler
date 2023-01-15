@@ -16,8 +16,10 @@ namespace Scheduler.ViewModels
         public event Action<bool, string> ErrorOccurred;
         public event Action<string> ChangedTime;
         public event Action<bool> ChangedStatusTimer;
+        public event Action<bool> ChangedStatus;
         public event Action<string> TimerIsOver;
         public event Action<string> ReminderIsOver;
+        public event Action<bool> TaskClosed;
 
         public CompositeRoot()
         {
@@ -29,6 +31,7 @@ namespace Scheduler.ViewModels
             _taskModelManager.ChangedStatusTimer += OnChangedStatusTimer;
             _taskModelManager.TimerIsOver += OnTimerIsOver;
             _taskModelManager.ReminderIsOver += OnReminderIsOver;
+            _taskModelManager.ChangedStatus += OnChangedStatus;
             _taskModelManager.StartReminder();
         }
 
@@ -53,6 +56,7 @@ namespace Scheduler.ViewModels
             _taskModelManager.ChangedStatusTimer -= OnChangedStatusTimer;
             _taskModelManager.TimerIsOver -= OnTimerIsOver;
             _taskModelManager.ReminderIsOver -= OnReminderIsOver;
+            _taskModelManager.ChangedStatus -= OnChangedStatus;
             _taskModelManager.Stop(TodoDataListListChanged);
         }
 
@@ -60,9 +64,11 @@ namespace Scheduler.ViewModels
 
         public void RestartRemonder() => _taskModelManager.StartReminder();
 
-        public void RunTimer(int index) => _taskModelManager.RunTimer(index);
+        public void RunTimer(int indexTask) => _taskModelManager.RunTimer(indexTask);
 
-        public void RemoveData(int index) => _taskModelManager.RemoveRecord(index);
+        public void RemoveData(int indexTask) => _taskModelManager.RemoveRecord(indexTask);
+
+        public bool CheсkStatusTask(int indexTask) => _taskModelManager.CheсkStatusTask(indexTask);
 
         private void TodoDataListListChanged(object sender, ListChangedEventArgs e)
         {
@@ -88,5 +94,7 @@ namespace Scheduler.ViewModels
         private void OnTimerIsOver(string message) => TimerIsOver?.Invoke(message);
 
         private void OnReminderIsOver(string message) => ReminderIsOver?.Invoke(message);
+
+        private void OnChangedStatus(bool value) => ChangedStatus?.Invoke(value);
     }
 }
