@@ -8,6 +8,7 @@ namespace Scheduler.Models
     {
         private BindingList<TaskModel> _taskDataList;
         private Reminder _reminder;
+        private string _emptyLine = " ";
 
         public event Action<string> ChangedTime;
         public event Action<bool, string> ErrorOccurred;
@@ -85,6 +86,18 @@ namespace Scheduler.Models
                 else
                     timer.Stop();
             }
+        }
+
+        public string GetTaskText()
+        {
+            if (_taskDataList == null)
+                return _emptyLine;
+
+            foreach (var task in _taskDataList)
+                if (task.Timer.Status == true)
+                    return task.Task;
+            
+            return _emptyLine;
         }
 
         private void StopAllTimers()

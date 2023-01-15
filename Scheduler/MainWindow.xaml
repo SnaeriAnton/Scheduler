@@ -1,4 +1,5 @@
 ﻿<Window x:Class="Scheduler.MainWindow"
+        x:Name="mainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,22 +9,18 @@
         xmlns:local="clr-namespace:Scheduler"
         mc:Ignorable="d"
         Title="Scheduler" MaxWidth="1200" MinWidth="1200" MaxHeight="800" MinHeight="800" Width="1200" Height="800" Loaded="WindowLoaded"
-    Topmost="false">
+    Topmost="false" Closed="ClosedWindow">
     <Grid Name="greadMain" Background="#ffdadada">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="556*"/>
-            <ColumnDefinition Width="41*"/>
-            <ColumnDefinition Width="450"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="400*"/>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="400"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition Height="60" />
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
-
-
-
 
         <Border Grid.Row="0" Margin="3" Background="White" Padding="30" CornerRadius="50" Grid.ColumnSpan="4">
             <TextBlock x:Name="timerView" Foreground="red" Text="00:00:00" FontSize="260" FontWeight="Bold" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -80,15 +77,15 @@
             </DataGrid.Resources>
         </DataGrid>
 
-        <Button x:Name="buttonDelit" Grid.Column="0" Grid.Row="2" Width="100" Height="50" Click="ButtonPlayClick" >
+        <Button x:Name="buttonDelit" Grid.Column="0" Grid.Row="2" Width="100" Height="50" Click="ButtonPlayClick" Margin="0, 2.5, 0, 0">
             <materialDesign:PackIcon x:Name="iconButtonPlay" Kind="Play" Height="40" Width="40"/>
         </Button>
 
-        <Button x:Name="buttonDelete" Grid.Column="2" Grid.Row="2" Width="100" Height="50" Click="ButtonDeleteClick">
+        <Button x:Name="buttonDelete" Grid.Column="1" Grid.Row="2" Width="100" Height="50" Click="ButtonDeleteClick" Margin="0, 2.5, 0, 0">
             <materialDesign:PackIcon Kind="Delete" Height="40" Width="40"/>
         </Button>
 
-        <Button x:Name="buttonViewTimerWindow" Grid.Column="3" Grid.Row="2" Width="100" Height="50" Click="ButtonShowViewTimerWindowClick" Margin="0">
+        <Button x:Name="buttonViewTimerWindow" Grid.Column="2" Grid.Row="2" Width="100" Height="50" Click="ButtonShowViewTimerWindowClick" Margin="0, 2.5, 0, 0">
             <materialDesign:PackIcon Kind="WindowRestore" Height="40" Width="40"/>
         </Button>
     </Grid>

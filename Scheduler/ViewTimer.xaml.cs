@@ -8,9 +8,6 @@ namespace Scheduler
 
         public void ShowTime(string time) => timerView.Text = time;
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
-        }
+        public void ShowTask(string time) => textTask.Text = time;
     }
 }

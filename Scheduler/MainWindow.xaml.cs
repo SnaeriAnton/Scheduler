@@ -18,10 +18,6 @@ namespace Scheduler
 
         private void Load()
         {
-            OpenWindowViewTimer();
-
-            
-
             _compositeRoot.ErrorOccurred += OnClosed;
             _compositeRoot.ChangedTime += OnSetTime;
             _compositeRoot.ChangedStatusTimer += OnChangeButtonPlayIcon;
@@ -31,6 +27,8 @@ namespace Scheduler
             _compositeRoot.LoadData();
 
             dgTaskList.ItemsSource = _compositeRoot.Tasks;
+
+            OpenWindowViewTimer();
         }
 
         private void OnClosed(bool value, string message)
@@ -44,6 +42,9 @@ namespace Scheduler
 
         private void CloseApplication()
         {
+            if (_viewTimer != null)
+                _viewTimer.Close();
+
             _compositeRoot.ErrorOccurred -= OnClosed;
             _compositeRoot.ChangedTime -= OnSetTime;
             _compositeRoot.ChangedStatusTimer -= OnChangeButtonPlayIcon;
@@ -51,15 +52,20 @@ namespace Scheduler
             _compositeRoot.ReminderIsOver -= OnReminderIsOver;
 
             _compositeRoot.Close();
-
             Close();
         }
 
         private void WindowLoaded(object sender, RoutedEventArgs e) => Load();
 
-        private void WindowClosed(object sender, EventArgs e) => CloseApplication();
+        private void ClosedWindow(object sender, EventArgs e) => CloseApplication();
 
-        private void ButtonPlayClick(object sender, RoutedEventArgs e) => _compositeRoot.RunTimer(dgTaskList.SelectedIndex);
+        private void ButtonPlayClick(object sender, RoutedEventArgs e)
+        {
+            _compositeRoot.RunTimer(dgTaskList.SelectedIndex);
+
+            if (_viewTimer != null)
+                _viewTimer.ShowTask(_compositeRoot.GetTaskText());
+        }
 
         private void ButtonDeleteClick(object sender, RoutedEventArgs e) => _compositeRoot.RemoveData(dgTaskList.SelectedIndex);
 
@@ -102,7 +108,7 @@ namespace Scheduler
 
             _viewTimer = new ViewTimer();
             buttonViewTimerWindow.IsEnabled = false;
-            _viewTimer.Owner = this;
+            _viewTimer.ShowTask(_compositeRoot.GetTaskText());
             _viewTimer.Closing += OnClosedViewTimerWindow;
             _viewTimer.Show();
         }

@@ -56,6 +56,8 @@ namespace Scheduler.ViewModels
             _taskModelManager.Stop(TodoDataListListChanged);
         }
 
+        public string GetTaskText() => _taskModelManager.GetTaskText();
+
         public void RestartRemonder() => _taskModelManager.StartReminder();
 
         public void RunTimer(int index) => _taskModelManager.RunTimer(index);
