@@ -7,6 +7,7 @@ namespace Scheduler
     public partial class MainWindow : Window
     {
         private CompositeRoot _compositeRoot;
+        private ViewTimer _viewTimer;
 
         public MainWindow()
         {
@@ -17,6 +18,10 @@ namespace Scheduler
 
         private void Load()
         {
+            OpenWindowViewTimer();
+
+            
+
             _compositeRoot.ErrorOccurred += OnClosed;
             _compositeRoot.ChangedTime += OnSetTime;
             _compositeRoot.ChangedStatusTimer += OnChangeButtonPlayIcon;
@@ -26,8 +31,6 @@ namespace Scheduler
             _compositeRoot.LoadData();
 
             dgTaskList.ItemsSource = _compositeRoot.Tasks;
-
-            
         }
 
         private void OnClosed(bool value, string message)
@@ -60,7 +63,13 @@ namespace Scheduler
 
         private void ButtonDeleteClick(object sender, RoutedEventArgs e) => _compositeRoot.RemoveData(dgTaskList.SelectedIndex);
 
-        private void OnSetTime(string time) => timerView.Text = time;
+        private void OnSetTime(string time)
+        {
+            if (_viewTimer != null)
+                _viewTimer.ShowTime(time);
+
+            timerView.Text = time;
+        }
 
         private void OnChangeButtonPlayIcon(bool value)
         {
@@ -77,11 +86,32 @@ namespace Scheduler
             Application.Current.MainWindow.Topmost = true;
             MessageBoxResult result = MessageBox.Show(message);
 
-            if (result == MessageBoxResult.OK )
+            if (result == MessageBoxResult.OK)
             {
                 Application.Current.MainWindow.Topmost = false;
                 _compositeRoot.RestartRemonder();
             }
+        }
+
+        private void ButtonShowViewTimerWindowClick(object sender, RoutedEventArgs e) => OpenWindowViewTimer();
+
+        private void OpenWindowViewTimer()
+        {
+            if (_viewTimer != null)
+                return;
+
+            _viewTimer = new ViewTimer();
+            buttonViewTimerWindow.IsEnabled = false;
+            _viewTimer.Owner = this;
+            _viewTimer.Closing += OnClosedViewTimerWindow;
+            _viewTimer.Show();
+        }
+
+        private void OnClosedViewTimerWindow(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _viewTimer.Closing -= OnClosedViewTimerWindow;
+            _viewTimer = null;
+            buttonViewTimerWindow.IsEnabled = true;
         }
     }
 }

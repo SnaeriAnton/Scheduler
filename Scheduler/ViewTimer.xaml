@@ -1,0 +1,16 @@
+﻿<Window x:Class="Scheduler.ViewTimer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:Scheduler"
+        mc:Ignorable="d"
+        MaxWidth="250" MinWidth="250" Width="250" MaxHeight="100" MinHeight="100" Height="100"
+        Topmost="true" Closing="Window_Closing">
+    <Grid Background="#ffdadada">
+        <Border Margin="3" Background="White" CornerRadius="10">
+            <TextBlock x:Name="timerView" Foreground="red" Text="00:00:00" FontSize="50" FontWeight="Bold" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+    </Grid>
+</Window>
