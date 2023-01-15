@@ -95,6 +95,41 @@ namespace Scheduler.Models
             Sound.Stop();
             Work(false);
         }
+        protected virtual async void Work(bool value)
+        {
+            if (Hours == 0 && Minutes == 0 && Seconds == 0)
+                return;
+
+            if (value == true)
+                _isPlay = value;
+            else
+                _isPlay = value;
+
+            ChangedStatus?.Invoke(_isPlay);
+
+            DispatcherTimer.Interval = new TimeSpan(Hours, Minutes, Seconds);
+
+            while (DispatcherTimer.Interval.TotalSeconds > 0 && _isPlay == true)
+            {
+                await Task.Delay(Dilay);
+
+                if (_isPlay == false)
+                    return;
+
+                Ticking();
+            }
+
+            if (Hours == 0 && Minutes == 0 && Seconds == 0)
+            {
+                Sound.Play();
+                _isPlay = false;
+                ChangedStatus?.Invoke(_isPlay);
+                TimerIsOver?.Invoke(Message);
+            }
+
+            ChangedTime?.Invoke(_currentTime);
+            Time = _currentTime;
+        }
 
         protected void Ticking()
         {
@@ -104,13 +139,19 @@ namespace Scheduler.Models
                 Hours = DispatcherTimer.Interval.Hours;
                 Minutes = DispatcherTimer.Interval.Minutes;
                 Seconds = DispatcherTimer.Interval.Seconds;
-                _currentTime = Hours + _colon.ToString() + Minutes + _colon.ToString() + Seconds;
+                _currentTime = AddMissingSigns(Hours.ToString()) + _colon.ToString() + AddMissingSigns(Minutes.ToString()) + _colon.ToString() + AddMissingSigns(Seconds.ToString());
                 ChangedTime?.Invoke(_currentTime);
             }
             catch (Exception exception)
             {
                 ErrorOccurred?.Invoke(exception.Message);
             }
+        }
+
+        private void NormalizationOfTimeDisplay()
+        {
+
+
         }
 
         private string BranchValue(string value, int index, ref int LastIndex, int checkNumber, ref int unitTime)
@@ -161,42 +202,6 @@ namespace Scheduler.Models
                 }
                 unitTime = number;
             }
-        }
-
-        protected virtual async void Work(bool value)
-        {
-            if (Hours == 0 && Minutes == 0 && Seconds == 0) //отрефакторить 
-                return;
-
-            if (value == true)
-                _isPlay = value;
-            else
-                _isPlay = value;
-
-            ChangedStatus?.Invoke(_isPlay);
-
-            DispatcherTimer.Interval = new TimeSpan(Hours, Minutes, Seconds);
-
-            while (DispatcherTimer.Interval.TotalSeconds > 0 && _isPlay == true) 
-            {
-                await Task.Delay(Dilay);
-
-                if (_isPlay == false)
-                    return;
-
-                Ticking();
-            }
-
-            if (Hours == 0 && Minutes == 0 && Seconds == 0)
-            {
-                Sound.Play();
-                _isPlay = false;
-                ChangedStatus?.Invoke(_isPlay);
-                TimerIsOver?.Invoke(Message);
-            }
-
-            ChangedTime?.Invoke(_currentTime);
-            Time = _currentTime;
         }
     }
 }
