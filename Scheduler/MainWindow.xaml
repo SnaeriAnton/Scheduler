@@ -1,5 +1,4 @@
 ﻿<Window x:Class="Scheduler.MainWindow"
-        x:Name="mainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -38,8 +37,13 @@
 
         <DataGrid x:Name="dgTaskList" Grid.Row="1" FontSize="17" FontWeight="Bold" Grid.ColumnSpan="4" AutoGenerateColumns="False" >
 
-<!--Чет надо придумать-->
-            <!--<DataGrid.CellStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn x:Name="date" Binding="{Binding Path = CreationDate}" IsReadOnly="true" Header="Дата создания" Width="200"/>
+                <DataGridCheckBoxColumn x:Name="status" Binding="{Binding Path = Status, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="false" Header="Статус" Width="90"/>
+                <DataGridTextColumn x:Name="timer" Binding="{Binding Path = Time}" IsReadOnly="false" Header="Таймер" Width="105"/>
+                <DataGridTextColumn x:Name="task" Binding="{Binding Path = Task}" IsReadOnly="false" Header="Задача" Width="*"/>
+            </DataGrid.Columns>
+            <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}">
                     <Setter Property="Padding" Value="{Binding RelativeSource={RelativeSource Self}, Path=(materialDesign:DataGridAssist.CellPadding)}" />
                     <Setter Property="Background" Value="Transparent" />
@@ -73,17 +77,6 @@
                         </Trigger>
                     </Style.Triggers>
                 </Style>
-            </DataGrid.CellStyle>-->
-<!--Чет надо придумать-->
-
-            <DataGrid.Columns>
-                <DataGridTextColumn x:Name="date" Binding="{Binding Path = CreationDate}" IsReadOnly="true" Header="Дата создания" Width="200"/>
-                <DataGridCheckBoxColumn x:Name="status" Binding="{Binding Path = Status, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="false" Header="Статус" Width="90"/>
-                <DataGridTextColumn x:Name="timer" Binding="{Binding Path = Time}" IsReadOnly="false" Header="Таймер" Width="105"/>
-                <DataGridTextColumn x:Name="task" Binding="{Binding Path = Task}" IsReadOnly="false" Header="Задача" Width="*"/>
-            </DataGrid.Columns>
-            <DataGrid.Resources>
-                <!--сюда перенести выделение ячеек-->
             </DataGrid.Resources>
         </DataGrid>
 
@@ -98,7 +91,5 @@
         <Button x:Name="buttonViewTimerWindow" Grid.Column="3" Grid.Row="2" Width="100" Height="50" Click="ButtonShowViewTimerWindowClick" Margin="0">
             <materialDesign:PackIcon Kind="WindowRestore" Height="40" Width="40"/>
         </Button>
-
-
     </Grid>
 </Window>
