@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="Scheduler" MaxWidth="1200" MinWidth="1200" MaxHeight="800" MinHeight="800" Width="1200" Height="800" Loaded="WindowLoaded" Closed="WindowClosed"
     Topmost="false">
-    <Grid Background="#ffdadada">
+    <Grid Name="greadMain" Background="#ffdadada">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="556*"/>
             <ColumnDefinition Width="41*"/>
@@ -35,7 +35,7 @@
         </Border>
 
         <DataGrid x:Name="dgTaskList" Grid.Row="1" FontSize="17" FontWeight="Bold" Grid.ColumnSpan="3" AutoGenerateColumns="False" >
-            
+
 <!--Чет надо придумать-->
             <DataGrid.CellStyle>
                 <Style TargetType="{x:Type DataGridCell}">
@@ -72,6 +72,7 @@
                     </Style.Triggers>
                 </Style>
             </DataGrid.CellStyle>
+<!--Чет надо придумать-->
 
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="date" Binding="{Binding Path = CreationDate}" IsReadOnly="true" Header="Дата создания" Width="200"/>
@@ -79,6 +80,9 @@
                 <DataGridTextColumn x:Name="timer" Binding="{Binding Path = Time}" IsReadOnly="false" Header="Таймер" Width="105"/>
                 <DataGridTextColumn x:Name="task" Binding="{Binding Path = Task}" IsReadOnly="false" Header="Задача" Width="*"/>
             </DataGrid.Columns>
+            <DataGrid.Resources>
+                <!--сюда перенести выделение ячеек-->
+            </DataGrid.Resources>
         </DataGrid>
 
 

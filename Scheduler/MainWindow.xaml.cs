@@ -54,7 +54,7 @@ namespace Scheduler
 
         private void WindowLoaded(object sender, RoutedEventArgs e) => Load();
 
-        private void WindowClosed(object sender, EventArgs e) => CloseApplication(); //дополнительное сохранение данных при закрытии
+        private void WindowClosed(object sender, EventArgs e) => CloseApplication();
 
         private void ButtonPlayClick(object sender, RoutedEventArgs e) => _compositeRoot.RunTimer(dgTaskList.SelectedIndex);
 

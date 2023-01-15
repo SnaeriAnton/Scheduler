@@ -33,11 +33,7 @@ namespace Scheduler.Models
             _reminder.ErrorOccurred += OnErrorOccurred;
         }
 
-        public void StartReminder()
-        {
-            _reminder.Play();
-            
-        }
+        public void StartReminder() => _reminder.Play();
 
         public void RemoveRecord(int index)
         {
@@ -61,6 +57,8 @@ namespace Scheduler.Models
 
         public void Stop(Action<object, ListChangedEventArgs> method)
         {
+            StopAllTimers();
+
             _reminder.Stop();
             _reminder.TimerIsOver -= OnReminderIsOver;
             _reminder.ErrorOccurred -= OnErrorOccurred;
@@ -88,6 +86,13 @@ namespace Scheduler.Models
                     timer.Stop();
             }
         }
+
+        private void StopAllTimers()
+        {
+            foreach (var task in _taskDataList)
+                if (task.Timer.Status == true)
+                    task.Timer.Stop();
+        } 
 
         private void CheakWorkTimers(int index)
         {
