@@ -19,6 +19,18 @@
 - “Back to work” reminder every hour.
 
 ## Tech
+- .NETFramework v4.8
+- MaterialDesignColors v2.0.9
+- MaterialDesignThemes v4.6.1
+- Newtonsoft.Json v13.0.2
+
+## Installation
+For assembly you may need to install:
+- MaterialDesignColors v2.0.9
+- MaterialDesignThemes v4.6.1
+- Newtonsoft.Json v13.0.2
+
+To collect projects. Go to the Build tab -> Build solution.
 
 ## Limitations
 - There is no way to change the language from the program for reminder messages.
