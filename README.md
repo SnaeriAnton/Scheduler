@@ -15,3 +15,10 @@
 - Checking the completed task.
 - Removing a task from the list.
 - Method for easy loading from resources.
+- “Back to work” reminder every hour.
+
+## Tech
+
+## Limitations
+- There is no way to change the language from the program for reminder messages.
+- There is no way to change the reminder interval from the program.
