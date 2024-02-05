@@ -6,4 +6,12 @@
   <img src="https://img.shields.io/github/issues-raw/SnaeriAnton/Scheduler" />
   <img src="https://img.shields.io/github/v/release/SnaeriAnton/Scheduler" />
 </p>
----
+
+ ## Features
+ 
+- Adding a task to the list.
+- Setting time for a task.
+- Starting and stopping the timer.
+- Checking the completed task.
+- Removing a task from the list.
+- Method for easy loading from resources.
