@@ -6,3 +6,4 @@
   <img src="https://img.shields.io/github/issues-raw/SnaeriAnton/Scheduler" />
   <img src="https://img.shields.io/github/v/release/SnaeriAnton/Scheduler" />
 </p>
+---
