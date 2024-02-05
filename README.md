@@ -1,5 +1,5 @@
 <h1 align="center">Scheduler</h1>
-<p align="center"><i>Unity package. Provides the "ResourcesReference" class for serializing an asset reference from the Resources folder into an asset path. With "Load" method for easy loading from Resources.</i></p>
+<p align="center"><i>Task tracking, with a timer and a sound signal when the time is up. Sound reminder "Get back to work." Each hour.</i></p>
 
 <p align="center">
   <img src="https://img.shields.io/github/license/mdlka/com.yellowsquad.assetpath" />
