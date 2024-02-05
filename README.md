@@ -7,6 +7,7 @@
   <img src="https://img.shields.io/github/v/release/SnaeriAnton/Scheduler" />
 </p>
 
+---
  ## Features
  
 - Adding a task to the list.
