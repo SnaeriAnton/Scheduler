@@ -17,6 +17,7 @@
 - Removing a task from the list.
 - Method for easy loading from resources.
 - “Back to work” reminder every hour.
+- A small window on top of all windows with a timer.
 
 ## Tech
 - .NETFramework v4.8
